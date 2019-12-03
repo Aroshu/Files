@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .data {
+            position: relative;
+            left: 82px;
+            top: -20px;
+        }
+
+        input {
+            height: 25px;
+        }
+
+        #sbmit {
+            display: block;
+            height: 32px;
+            margin-left: 180px;
+            margin-top: -31px;
+        }
+
+        #getCata {
+            height: 200px;
+            width: 330px;
+            border: 2px outset;
+            background: aquamarine;
+        }
+
+        #getCata div {
+            display: inline-block;
+            width: 135px;
+            margin-left: 10px;
+            margin-top: 25px;
+        }
+
+        .sbmitbtn {
+            height: 35px;
+            width: 65px;
+            font-weight: bolder;
+            margin-top: 10px;
+            margin-left: 130px;
+        }
+
+        #bill {
+            position: absolute;
+            top: 8px;
+            left: 271px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .example {
+            position: fixed;
+            left: 450px;
+            top: 5px;
+        }
+
+        /* Style the search field */
+        form.example input[type=text] {
+            padding: 10px;
+            font-size: 17px;
+            border: 1px solid grey;
+            float: left;
+            height: 20px;
+            background: #f1f1f1;
+        }
+
+        /* Style the submit button */
+        form.example button {
+            float: left;
+            /* width: 20%; */
+            padding: 10px;
+            background: #2196F3;
+            color: white;
+            font-size: 17px;
+            border: 1px solid grey;
+            border-left: none;
+            /* Prevent double borders */
+            cursor: pointer;
+        }
+
+        form.example button:hover {
+            background: #0b7dda;
+        }
+
+        /* Clear floats */
+        form.example::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        #findedItems {
+            position: fixed;
+            top: 65px;
+            left: 460px;
+        }
+    </style>
+    <script>
+        let newCategory = JSON.parse(localStorage.getItem("catagories"));
+        // console.log(newCategory)
+
+        function updateCategory() {
+            Category.innerHTML = "";
+            newCategory.forEach(function (category) {
+
+                Category.innerHTML += '<option>' + category.name + '</option>'
+            })
+        }
+
+        function addCategories() {
+            AddCata.value = "";
+            // addCetegory = prompt('Enter Name'); 
+            submit.style.display = "block";
+        }
+
+        function submitCata() {
+            let addCetegory = AddCata.value;
+            categoryType = {
+                name: addCetegory,
+                item: []
+            }
+            newCategory.push(categoryType);
+            updateCategory();
+            submit.style.display = "none";
+        }
+
+        function addStocks() {
+            cataName.value = "";
+            cataQty.value = "";
+            cataPrice.value = "";
+            getCata.style.display = "block";
+
+        }
+        function saveCata() {
+            // let inventoryName = prompt('Enter Stock Name');
+            // let inventoryPrice = prompt('Enter Stock Price');
+            // let inventoryQty = prompt('Enter Stock Quantity');
+            let inventoryName = cataName.value;
+            let inventoryQty = cataQty.value;
+            let inventoryPrice = cataPrice.value;
+            let newStock = {
+                name: inventoryName,
+                price: inventoryPrice,
+                qty: inventoryQty
+            }
+            let CategoryFound = newCategory.find(function (category) {
+                if (category.name == Category.value) {
+                    return true;
+                }
+            })
+            //console.log(CategoryFound)
+            CategoryFound.item.push(newStock);
+            getCata.style.display = "none";
+        }
+
+        function calculateBill() {
+            CategoryBill.innerHTML = ""
+            newCategory.forEach(function (catagory, cataindex) {
+
+                let newRow1 = document.createElement('tr');
+                newRow1.className = "categryName"
+                CategoryBill.appendChild(newRow1);
+
+                let Cataname = document.createElement('td');
+                let cataName = document.createElement('h1');
+                cataName.innerText = catagory.name;
+                Cataname.colSpan = "3";
+                Cataname.appendChild(cataName);
+                newRow1.appendChild(Cataname);
+
+                let CataDel = document.createElement('td');
+                let cataItem = document.createElement('button');
+                cataItem.setAttribute('data-item', cataindex);
+                cataItem.setAttribute('data-name', catagory.name);
+                cataItem.innerText = "Delete";
+
+                cataItem.onclick = deleteCata;
+                CataDel.appendChild(cataItem);
+                newRow1.appendChild(CataDel);
+
+                let newRow2 = document.createElement('tr');
+                newRow1.insertAdjacentElement("afterend", newRow2);
+
+                let itemDtl = document.createElement('td');
+                itemDtl.innerText = "Item Name";
+                newRow2.appendChild(itemDtl);
+
+                let itemDtl2 = document.createElement('td');
+                itemDtl2.innerText = "Item Quantity";
+                newRow2.appendChild(itemDtl2);
+
+                let itemDtl3 = document.createElement('td');
+                itemDtl3.innerText = "Item Price";
+                newRow2.appendChild(itemDtl3);
+
+                let itemDtl4 = document.createElement('td');
+                itemDtl4.innerText = "Item Delete";
+                newRow2.appendChild(itemDtl4);
+
+                catagory.item.forEach(function (item, index) {
+
+                    let newRow3 = document.createElement('tr');
+                    CategoryBill.appendChild(newRow3);
+
+                    let itemName = document.createElement('td');
+                    itemName.innerText = item.name;
+                    newRow3.appendChild(itemName);
+
+                    let itemQty = document.createElement('td');
+                    itemQty.innerText = item.qty;
+                    newRow3.appendChild(itemQty);
+
+                    let itemprice = document.createElement('td');
+                    itemprice.innerText = item.price;
+                    newRow3.appendChild(itemprice);
+
+                    let itemDel = document.createElement('td');
+                    let dltItem = document.createElement('button');
+                    dltItem.setAttribute('data-item', index);
+                    dltItem.setAttribute('data-name', catagory.name);
+                    dltItem.innerText = "Delete";
+
+                    dltItem.onclick = deleteItem;
+                    itemDel.appendChild(dltItem);
+                    newRow3.appendChild(itemDel);
+                })
+            })
+            localStorage.setItem("catagories", JSON.stringify(newCategory))
+            //localStorage.getItem("catagories", item)
+        }
+
+        function deleteItem() {
+
+            let index = event.target.getAttribute('data-item');
+            let catgryName = event.target.getAttribute('data-name');
+
+            let catagoryFound = newCategory.find(function (category) {
+                if (category.name == catgryName) {
+                    return true
+                }
+            });
+            catagoryFound.item.splice(index, 1);
+            calculateBill()
+            //console.log(index)
+        }
+
+        function deleteCata() {
+            let cataindex = event.target.getAttribute('data-item');
+            newCategory.splice(cataindex, 1)
+
+            calculateBill()
+            //console.log(cataindex)
+        }
+
+        function findItem() {
+            filterItem = [];
+            let findData = findItems.value;
+            findedItems.innerHTML = "";
+            newCategory.forEach(function (catagory) {
+
+                catagory.item.filter(function (item) {
+                    if (item.name != findData) {
+                        return true;
+                    }
+                    filterItem.push(item);
+                })
+
+            })
+            console.log(filterItem);
+
+            findedItems.innerHTML += '<tr> <td>' + "Item Name" + '</td> <td>' + "Item Quantity" + '</td> <td>' + "Item Price" + '</td> </tr>';
+
+            filterItem.forEach(function (item) {
+
+                findedItems.innerHTML += '<tr> <td>' + item.name + '</td> <td>' + item.qty + '</td> <td>' + item.price + '</td> </tr>';
+
+
+            })
+        }
+    </script>
+</head>
+
+<body>
+    <div>
+        <select name="" id="Category"></select>
+    </div>
+
+    <button class="data" onclick="addCategories()">Add Category</button>
+    <button class="data" onclick="addStocks()">Add Stock</button>
+
+    <div id="submit" style="display: none;">
+        <input type="text" name="" id="AddCata">
+        <button id="sbmit" onclick="submitCata()">Submit</button>
+    </div>
+
+    <div id="getCata" style="display: none;">
+        <div>Catagory Name:</div><input type="text" name="" id="cataName">
+        <div>Catagory Quantity:</div><input type="text" name="" id="cataQty">
+        <div>Catagory Price: </div><input type="text" name="" id="cataPrice">
+        <button class="sbmitbtn" onclick="saveCata()">Save</button>
+    </div>
+    <button id="bill" onclick="calculateBill()">Show Inventory</button>
+    <table border="1" id="CategoryBill">
+        <!-- style="display: none;" -->
+    </table>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <form class="example" action="action_page.php">
+        <input type="text" placeholder="Search.." name="search" id="findItems" oninput="findItem()">
+        <button type="search"><i class="fa fa-search"></i></button>
+    </form>
+    <table id="findedItems" border="1">
+    </table>
+</body>
+
+</html>
